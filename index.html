@@ -140,9 +140,175 @@
       from {bottom: 30px; opacity: 1;}
       to {bottom: 0; opacity: 0;}
     }
+
+
+    /* Access Gate - 단순 프론트엔드 접속 제한 기능이며 강력한 보안 기능이 아님 */
+    #protectedContent {
+      display: none;
+    }
+
+    #accessGate {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(0, 255, 102, 0.12), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(255, 234, 0, 0.07), transparent 30%),
+        #0a0a0a;
+      color: #ffffff;
+    }
+
+    .access-gate-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(22, 22, 22, 0.92);
+      border: 1px solid rgba(0, 255, 102, 0.28);
+      border-radius: 24px;
+      padding: 36px 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55), 0 0 40px rgba(0, 255, 102, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .access-gate-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: #00ff66;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .access-gate-title {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .access-gate-desc {
+      margin: 0 0 26px;
+      color: #a3a3a3;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .access-gate-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .access-gate-input {
+      width: 100%;
+      height: 52px;
+      padding: 0 52px 0 16px;
+      border-radius: 14px;
+      border: 1px solid #2a2a2a;
+      outline: none;
+      background: #050505;
+      color: #ffffff;
+      font-size: 15px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .access-gate-input:focus {
+      border-color: #00ff66;
+      box-shadow: 0 0 0 4px rgba(0, 255, 102, 0.12);
+    }
+
+    .access-code-toggle {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #8a8a8a;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .access-code-toggle:hover,
+    .access-code-toggle:focus-visible {
+      color: #00ff66;
+      background: rgba(0, 255, 102, 0.08);
+      outline: none;
+    }
+
+    .access-gate-button {
+      width: 100%;
+      height: 52px;
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid #00ff66;
+      background: #00ff66;
+      color: #000000;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .access-gate-button:hover {
+      transform: translateY(-1px);
+      background: #20ff7c;
+    }
+
+    .access-gate-error {
+      min-height: 22px;
+      margin-top: 12px;
+      color: #ff6b6b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .access-gate-card {
+        padding: 30px 22px;
+      }
+
+      .access-gate-title {
+        font-size: 26px;
+      }
+    }
+
   </style>
 </head>
 <body class="antialiased">
+
+  <!-- Access Code Gate -->
+  <div id="accessGate" aria-label="교육 페이지 접속 코드 입력 화면">
+    <div class="access-gate-card">
+      <div class="access-gate-kicker">
+        <i class="fa-solid fa-lock"></i> ACCESS REQUIRED
+      </div>
+      <h1 class="access-gate-title">교육 페이지 접속</h1>
+      <p class="access-gate-desc">접속 코드를 입력해야 교육 페이지를 확인할 수 있습니다.</p>
+      <div class="access-gate-input-wrap">
+        <input id="accessCodeInput" class="access-gate-input" type="password" placeholder="접속 코드를 입력하세요" autocomplete="off" />
+        <button id="accessCodeToggle" class="access-code-toggle" type="button" onclick="toggleAccessCodeVisibility()" aria-label="접속 코드 보이기" title="접속 코드 보이기">
+          <i id="accessCodeToggleIcon" class="fa-regular fa-eye"></i>
+        </button>
+      </div>
+      <button id="accessCodeButton" class="access-gate-button" type="button" onclick="checkAccessCode()">접속하기</button>
+      <div id="accessCodeError" class="access-gate-error" role="alert" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div id="protectedContent">
 
   <!-- Custom Mouse Cursor elements -->
   <div class="custom-cursor hidden md:block" id="customCursor"></div>
@@ -1203,6 +1369,112 @@ UI 개선:
           }
         }
       );
+    });
+  </script>
+  </div>
+
+  <!-- Access Gate Script -->
+  <script>
+    // 단순 프론트엔드 접속 제한 기능이며 강력한 보안 기능이 아님
+    const ACCESS_SESSION_KEY = 'educationPageAccessGranted';
+
+    function getKoreaDateString() {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
+    }
+
+    function getValidAccessCode() {
+      const koreaDate = getKoreaDateString();
+      return koreaDate <= '2026-07-09' ? 'hanatour' : 'hanatour@00';
+    }
+
+    function unlockProtectedContent() {
+      const accessGate = document.getElementById('accessGate');
+      const protectedContent = document.getElementById('protectedContent');
+
+      if (accessGate) {
+        accessGate.style.display = 'none';
+      }
+
+      if (protectedContent) {
+        protectedContent.style.display = 'block';
+      }
+
+      if (window.ScrollTrigger && typeof window.ScrollTrigger.refresh === 'function') {
+        window.ScrollTrigger.refresh();
+      }
+    }
+
+    function toggleAccessCodeVisibility() {
+      const input = document.getElementById('accessCodeInput');
+      const toggle = document.getElementById('accessCodeToggle');
+      const icon = document.getElementById('accessCodeToggleIcon');
+
+      if (!input) {
+        return;
+      }
+
+      const shouldShow = input.type === 'password';
+      input.type = shouldShow ? 'text' : 'password';
+
+      if (icon) {
+        icon.className = shouldShow ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+      }
+
+      if (toggle) {
+        const label = shouldShow ? '접속 코드 감추기' : '접속 코드 보이기';
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('title', label);
+      }
+
+      input.focus();
+    }
+
+    function checkAccessCode() {
+      const input = document.getElementById('accessCodeInput');
+      const error = document.getElementById('accessCodeError');
+      const enteredCode = input ? input.value.trim() : '';
+      const validCode = getValidAccessCode();
+
+      if (enteredCode === validCode) {
+        sessionStorage.setItem(ACCESS_SESSION_KEY, 'true');
+        if (error) {
+          error.textContent = '';
+        }
+        unlockProtectedContent();
+        return;
+      }
+
+      if (error) {
+        error.textContent = '접속 코드가 올바르지 않습니다.';
+      }
+
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('accessCodeInput');
+
+      if (sessionStorage.getItem(ACCESS_SESSION_KEY) === 'true') {
+        unlockProtectedContent();
+        return;
+      }
+
+      if (input) {
+        input.focus();
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+            checkAccessCode();
+          }
+        });
+      }
     });
   </script>
 </body>
