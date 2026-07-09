@@ -1211,7 +1211,7 @@ UI 개선:
         <div class="bg-brandGray rounded-xl border border-neutral-900 p-6 md:p-8">
           <h3 class="text-lg md:text-xl font-bold text-brandAccent mb-4 flex items-start gap-3">
             <span class="text-xs py-1 px-2.5 bg-brandAccent/10 text-brandAccent rounded border border-brandAccent/20">Q1</span>
-            <span>실무에서 다루는 엑셀 데이터는 행(Row)이 수만 건에 달합니다. 외부 서버나 DB 연동 없이 HTML 단일 파일(SheetJS CDN)만으로 대용량 데이터를 처리할 때 성능 저하나 브라우저 멈춤 현상은 없나요?</span>
+            <span>실무에서 다루는 엑셀 데이터는 행(Row)이 수만 건에 달합니다. 외부 서버나 DB 연동 없이 HTML 단일 파일만으로 대용량 데이터를 처리할 때 성능 저하나 브라우저 멈춤 현상은 없나요?</span>
           </h3>
           <p class="text-neutral-300 text-sm md:text-base leading-relaxed pl-10">
             좋은 질문입니다. 본 커리큘럼에서 사용하는 방식은 브라우저의 클라이언트 자원(메모리 및 CPU)을 그대로 사용하는 100% 프론트엔드 동작 방식입니다. 일반적인 수천 건의 데이터는 지연 없이 실시간 필터링과 대시보드 연동이 가능하지만, 행이 수만 건 이상으로 넘어가면 브라우저가 일시적으로 멈추거나 렌더링 속도가 급격히 저하될 수 있습니다.<br><br>이를 해결하기 위해 STEP 5 이후의 심화 단계에서는 AI에게 "데이터를 한 번에 다 그리지 말고 50개씩 나눠서 보여주는 페이지네이션(Pagination) 기능을 추가해줘" 또는 "스크롤을 내릴 때마다 데이터를 로딩하는 무한 스크롤 방식을 적용해줘"라는 프롬프트를 통해 브라우저 과부하를 일부 우회할 수 있습니다.
